@@ -1,0 +1,33 @@
+# Android Studio & IntelliJ
+*.iml
+.idea/
+!.idea/codeStyles/
+!.idea/runConfigurations/
+.idea/workspace.xml
+.idea/modules.xml
+.idea/caches
+.idea/libraries
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+
+# Gradle
+.gradle/
+local.properties
+/build/
+.externalNativeBuild/
+.cxx/
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
+
+# OS-specific
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# Logs and temp
+*.log
+*.tmp
+*.hprof
+
+# Captures
+/captures/
