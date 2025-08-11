@@ -25,6 +25,7 @@
         android:layout_margin="@dimen/_13sdp"
         android:background="@drawable/bg_white_round_corners"
         android:padding="@dimen/_13sdp"
+        app:layout_constraintBottom_toTopOf="@id/rvStoreProduct"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar">
@@ -88,14 +89,27 @@
             <TextView
                 android:id="@+id/tvOpenHours"
                 style="@style/Paragraph2Primary"
-                android:layout_marginStart="@dimen/_7sdp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_7sdp"
                 tools:text="15.01 - 19.45" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvStoreProduct"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingHorizontal="@dimen/_13sdp"
+        android:paddingTop="@dimen/_6sdp"
+        android:paddingBottom="@dimen/_13sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/clStoreInfo" />
 
     <TextView
         android:id="@+id/tvError"

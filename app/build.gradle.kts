@@ -41,7 +41,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -56,6 +55,8 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.intuit.sdp)
     implementation(libs.intuit.ssp)
+    implementation(libs.glide)
+    kapt(libs.glide.compiler)
     kapt(libs.hilt.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

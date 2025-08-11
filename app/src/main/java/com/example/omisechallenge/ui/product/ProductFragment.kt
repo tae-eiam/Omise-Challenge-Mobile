@@ -1,7 +1,6 @@
 package com.example.omisechallenge.ui.product
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,10 +11,13 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.omisechallenge.R
 import com.example.omisechallenge.databinding.FragmentProductBinding
+import com.example.omisechallenge.domain.model.Product
 import com.example.omisechallenge.domain.model.Store
 import com.example.omisechallenge.ui.UiState
+import com.example.omisechallenge.ui.product.adapter.ProductAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -25,6 +27,8 @@ class ProductFragment: Fragment() {
     private var _binding: FragmentProductBinding? = null
     private val binding get() = _binding!!
     private val viewModel: ProductViewModel by viewModels()
+
+    private val productAdapter by lazy { ProductAdapter() }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,20 +41,37 @@ class ProductFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         initViews()
         initListeners()
         subscribeToEvent()
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
         configViews()
     }
 
     private fun initViews() {
+        initToolbar()
+        initProductList()
+    }
+
+    private fun initToolbar() {
         (activity as AppCompatActivity).setSupportActionBar(binding.toolbar)
+    }
+
+    private fun initProductList() {
+        with(binding) {
+            rvStoreProduct.apply {
+                layoutManager = LinearLayoutManager(context)
+                adapter = productAdapter
+            }
+        }
     }
 
     private fun configViews() {
         viewModel.loadStoreInfo()
-//        viewModel.loadProducts()
+        viewModel.loadProducts()
     }
 
     private fun configStoreInfo(info: Store) {
@@ -70,6 +91,10 @@ class ProductFragment: Fragment() {
         }
     }
 
+    private fun configProducts(products: List<Product>) {
+        productAdapter.updateData(products)
+    }
+
     private fun initListeners() {
 
     }
@@ -87,11 +112,17 @@ class ProductFragment: Fragment() {
                         }
                     }
                 }
+            }
+        }
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.productState.collectLatest { state ->
                     when(state) {
                         is UiState.Loading -> Unit
-                        is UiState.Success -> Unit
+                        is UiState.Success -> {
+                            configProducts(state.data)
+                        }
                         is UiState.Error -> {
                             binding.clStoreInfo.isVisible = false
                             binding.tvError.isVisible = true

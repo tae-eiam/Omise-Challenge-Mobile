@@ -1,6 +1,5 @@
 package com.example.omisechallenge.ui.product
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.omisechallenge.domain.model.Product
@@ -13,7 +12,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.LocalDate
-import java.time.LocalTime
 import java.time.OffsetTime
 import java.time.ZoneId
 import java.time.ZoneOffset
