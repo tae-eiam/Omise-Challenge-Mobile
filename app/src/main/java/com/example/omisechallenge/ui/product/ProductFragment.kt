@@ -6,12 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.omisechallenge.databinding.FragmentProductBinding
+import com.example.omisechallenge.ui.UiState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -51,15 +53,19 @@ class ProductFragment: Fragment() {
     private fun subscribeToEvent() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.storeState.collectLatest {
-                    with(binding) {
-                        tvStore.text = it?.toString()
+                viewModel.storeState.collectLatest { state ->
+                    when(state) {
+                        is UiState.Loading -> Unit
+                        is UiState.Success -> Unit
+                        is UiState.Error -> { binding.tvError.isVisible = true }
                     }
                 }
 
-                viewModel.productState.collectLatest {
-                    with(binding) {
-                        tvProduct.text = it.toString()
+                viewModel.productState.collectLatest { state ->
+                    when(state) {
+                        is UiState.Loading -> Unit
+                        is UiState.Success -> Unit
+                        is UiState.Error -> { binding.tvError.isVisible = true }
                     }
                 }
             }
@@ -67,9 +73,8 @@ class ProductFragment: Fragment() {
     }
 
     private fun configViews() {
-        viewModel.toString()
-//        viewModel.getStoreInfo()
-//        viewModel.getProducts()
+        viewModel.loadStoreInfo()
+        viewModel.loadProducts()
     }
 
     override fun onDestroyView() {

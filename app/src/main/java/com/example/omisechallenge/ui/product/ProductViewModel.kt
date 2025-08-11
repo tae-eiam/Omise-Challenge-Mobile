@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.omisechallenge.domain.model.Product
 import com.example.omisechallenge.domain.model.Store
 import com.example.omisechallenge.domain.usecase.StoreUseCase
+import com.example.omisechallenge.ui.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,34 +16,32 @@ import javax.inject.Inject
 class ProductViewModel @Inject constructor(
     private val storeUseCase: StoreUseCase
 ) : ViewModel() {
-    private var _storeState = MutableStateFlow<Store?>(null)
-    val storeState: StateFlow<Store?> = _storeState
+    private var _storeState = MutableStateFlow<UiState<Store>>(UiState.Loading)
+    val storeState: StateFlow<UiState<Store>> = _storeState
 
-    private var _productState = MutableStateFlow<List<Product>>(listOf())
-    val productState: StateFlow<List<Product>> = _productState
+    private var _productState = MutableStateFlow<UiState<List<Product>>>(UiState.Loading)
+    val productState: StateFlow<UiState<List<Product>>> = _productState
 
-    init {
-//        getStoreInfo()
-    }
-
-    fun getStoreInfo() {
+    fun loadStoreInfo() {
         viewModelScope.launch {
+            _storeState.value = UiState.Loading
             try {
                 val storeInfo = storeUseCase.getStoreInfo()
-                _storeState.value = storeInfo
+                _storeState.value = UiState.Success(storeInfo)
             } catch (e: Exception) {
-                e.message.toString()
+                _storeState.value = UiState.Error(e.message.toString())
             }
         }
     }
 
-    fun getProducts() {
+    fun loadProducts() {
         viewModelScope.launch {
+            _productState.value = UiState.Loading
             try {
                 val products = storeUseCase.getProducts()
-                _productState.value = products
+                _productState.value = UiState.Success(products)
             } catch (e: Exception) {
-                e.message.toString()
+                _productState.value = UiState.Error(e.message.toString())
             }
         }
     }
