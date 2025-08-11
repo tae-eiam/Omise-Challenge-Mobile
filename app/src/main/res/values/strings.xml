@@ -5,4 +5,5 @@
     <string name="store_open">Open</string>
     <string name="store_close">Closed</string>
     <string name="store_open_hours">%s - %s</string>
+    <string name="check_out">Check out</string>
 </resources>

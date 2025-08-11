@@ -2,7 +2,9 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.OmiseChallenge" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/orange</item>
+        <item name="colorPrimaryDark">@color/orange</item>
+        <item name="android:statusBarColor">@color/orange</item>
     </style>
 
     <style name="Theme.OmiseChallenge" parent="Base.Theme.OmiseChallenge" />
@@ -11,6 +13,12 @@
         <item name="android:textSize">@dimen/_13ssp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/darkgrey2</item>
+    </style>
+
+    <style name="HeadingNeutral">
+        <item name="android:textSize">@dimen/_13ssp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 
     <style name="ParagraphPrimary">

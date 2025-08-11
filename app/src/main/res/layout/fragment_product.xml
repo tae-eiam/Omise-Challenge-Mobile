@@ -16,7 +16,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:titleTextColor="@color/white" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/clStoreInfo"
@@ -25,7 +26,7 @@
         android:layout_margin="@dimen/_13sdp"
         android:background="@drawable/bg_white_round_corners"
         android:padding="@dimen/_13sdp"
-        app:layout_constraintBottom_toTopOf="@id/rvStoreProduct"
+        app:layout_constraintBottom_toTopOf="@id/sectionDivider"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar">
@@ -98,6 +99,17 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <View
+        android:id="@+id/sectionDivider"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_1sdp"
+        android:layout_marginHorizontal="@dimen/_13sdp"
+        android:background="@color/darkgrey"
+        app:layout_constraintBottom_toTopOf="@id/rvStoreProduct"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/clStoreInfo" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvStoreProduct"
         android:layout_width="match_parent"
@@ -106,10 +118,33 @@
         android:paddingHorizontal="@dimen/_13sdp"
         android:paddingTop="@dimen/_6sdp"
         android:paddingBottom="@dimen/_13sdp"
+        app:layout_constraintBottom_toTopOf="@id/flButtonContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/sectionDivider" />
+
+    <FrameLayout
+        android:id="@+id/flButtonContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:paddingHorizontal="@dimen/_27sdp"
+        android:paddingVertical="@dimen/_7sdp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/clStoreInfo" />
+        app:layout_constraintTop_toBottomOf="@id/rvStoreProduct">
+
+        <Button
+            android:id="@+id/btnNext"
+            style="@style/HeadingNeutral"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:stateListAnimator="@null"
+            android:text="@string/check_out" />
+
+    </FrameLayout>
 
     <TextView
         android:id="@+id/tvError"
