@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Omise Challenge</string>
     <string name="unable_to_load_data">Unable to load data</string>
+    <string name="rating_icon_description">Rating Icon</string>
+    <string name="store_open">Open</string>
+    <string name="store_close">Closed</string>
+    <string name="store_open_hours">%s - %s</string>
 </resources>

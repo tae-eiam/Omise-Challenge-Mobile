@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/clStoreRoot"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/grey">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -15,6 +17,85 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clStoreInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_13sdp"
+        android:background="@drawable/bg_white_round_corners"
+        android:padding="@dimen/_13sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+        <TextView
+            android:id="@+id/tvStoreName"
+            style="@style/HeadingPrimary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Store Name" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/llRatingContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="@id/tvStoreName"
+            app:layout_constraintStart_toEndOf="@id/tvStoreName"
+            app:layout_constraintTop_toTopOf="@id/tvStoreName">
+
+            <ImageView
+                android:id="@+id/imgStar"
+                android:layout_width="@dimen/_10sdp"
+                android:layout_height="@dimen/_10sdp"
+                android:layout_marginStart="@dimen/_7sdp"
+                android:layout_marginEnd="@dimen/_3sdp"
+                android:contentDescription="@string/rating_icon_description"
+                android:src="@drawable/star" />
+
+            <TextView
+                android:id="@+id/tvRating"
+                style="@style/ParagraphPrimary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="4.5" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/llOpenHoursContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:gravity="center_vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvStoreName">
+
+            <TextView
+                android:id="@+id/tvOpenDesc"
+                style="@style/Paragraph2Neutral"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_open_close"
+                android:paddingHorizontal="@dimen/_3sdp"
+                android:paddingVertical="@dimen/_2sdp"
+                tools:text="@string/store_open" />
+
+            <TextView
+                android:id="@+id/tvOpenHours"
+                style="@style/Paragraph2Primary"
+                android:layout_marginStart="@dimen/_7sdp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="15.01 - 19.45" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:id="@+id/tvError"

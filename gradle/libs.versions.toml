@@ -34,6 +34,7 @@ logging-interceptor = { group = "com.squareup.okhttp3", name="logging-intercepto
 hilt-android = { group = "com.google.dagger", name="hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name="hilt-compiler", version.ref = "hilt" }
 intuit-sdp = { group = "com.intuit.sdp", name="sdp-android", version.ref="intuit" }
+intuit-ssp = { group = "com.intuit.ssp", name="ssp-android", version.ref="intuit" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
