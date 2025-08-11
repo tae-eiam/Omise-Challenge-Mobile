@@ -1,4 +1,4 @@
-package com.example.omisechallenge.activity
+package com.example.omisechallenge.ui
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge

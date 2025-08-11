@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/productFragment"
-        android:name="com.example.omisechallenge.fragment.ProductFragment"
+        android:name="com.example.omisechallenge.ui.product.ProductFragment"
         android:label="Product" />
 
 </navigation>
