@@ -6,4 +6,11 @@
     <string name="store_close">Closed</string>
     <string name="store_open_hours">%s - %s</string>
     <string name="check_out">Check out</string>
+    <string name="order_summary">Order Summary</string>
+    <string name="num_order">x%s</string>
+    <string name="address">Address</string>
+    <string name="hint_address">Please enter address</string>
+    <string name="total">Total:</string>
+    <string name="total_price">%s THB</string>
+    <string name="confirm">Confirm</string>
 </resources>

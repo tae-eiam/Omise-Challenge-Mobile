@@ -17,7 +17,7 @@ class ProductViewHolder(
         initViewListeners()
 
         with(view) {
-            Glide.with(root.context)
+            Glide.with(root)
                 .load(order.imageUrl)
                 .circleCrop()
                 .into(imgProduct)
