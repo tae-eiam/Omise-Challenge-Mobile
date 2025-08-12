@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.omisechallenge.domain.model.Product
 import com.example.omisechallenge.domain.model.Store
 import com.example.omisechallenge.domain.usecase.StoreUseCase
-import com.example.omisechallenge.ui.Order
+import com.example.omisechallenge.ui.model.Order
 import com.example.omisechallenge.ui.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

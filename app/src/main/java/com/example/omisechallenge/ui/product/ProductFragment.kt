@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -16,6 +15,7 @@ import com.example.omisechallenge.R
 import com.example.omisechallenge.databinding.FragmentProductBinding
 import com.example.omisechallenge.domain.model.Product
 import com.example.omisechallenge.domain.model.Store
+import com.example.omisechallenge.ui.BaseFragment
 import com.example.omisechallenge.ui.UiState
 import com.example.omisechallenge.ui.product.adapter.ProductAdapter
 import com.example.omisechallenge.ui.product.listener.OnEventTypeListener
@@ -24,7 +24,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class ProductFragment: Fragment() {
+class ProductFragment: BaseFragment() {
     private var _binding: FragmentProductBinding? = null
     private val binding get() = _binding!!
     private val viewModel: ProductViewModel by viewModels()
@@ -40,19 +40,12 @@ class ProductFragment: Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        initViews()
-        initListeners()
-        subscribeToEvent()
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
-    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-        super.onViewStateRestored(savedInstanceState)
-        configViews()
-    }
-
-    private fun initViews() {
+    override fun initViews(view: View) {
         initToolbar()
         initProductList()
     }
@@ -70,7 +63,7 @@ class ProductFragment: Fragment() {
         }
     }
 
-    private fun configViews() {
+    override fun configViews() {
         viewModel.loadStoreInfo()
         viewModel.loadProducts()
     }
@@ -96,7 +89,7 @@ class ProductFragment: Fragment() {
         productAdapter.updateData(products)
     }
 
-    private fun initListeners() {
+    override fun initListeners() {
         productAdapter.setOnProductEventTypeListener { onEventTypeListener ->
             when(onEventTypeListener) {
                 is OnEventTypeListener.OnAddOrderClickListener -> {
@@ -113,7 +106,7 @@ class ProductFragment: Fragment() {
         }
     }
 
-    private fun subscribeToEvent() {
+    override fun subscribeToEvents() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.storeState.collectLatest { state ->
@@ -145,10 +138,5 @@ class ProductFragment: Fragment() {
                 }
             }
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }
