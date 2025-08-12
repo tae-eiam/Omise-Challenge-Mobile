@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.omisechallenge.domain.model.Product
 import com.example.omisechallenge.domain.model.Store
 import com.example.omisechallenge.domain.usecase.StoreUseCase
+import com.example.omisechallenge.ui.Order
 import com.example.omisechallenge.ui.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,6 +28,8 @@ class ProductViewModel @Inject constructor(
 
     private var _productState = MutableStateFlow<UiState<List<Product>>>(UiState.Loading)
     val productState: StateFlow<UiState<List<Product>>> = _productState
+
+    val orderList: MutableList<Order> = mutableListOf()
 
     fun loadStoreInfo() {
         viewModelScope.launch {
@@ -71,5 +74,30 @@ class ProductViewModel @Inject constructor(
             return currentTime.isAfter(openingTime) && currentTime.isBefore(closingTime)
         }
         return currentTime.isAfter(openingTime) || currentTime.isBefore(closingTime)
+    }
+
+    fun updateOrder(product: Product, amount: Int) {
+        // Check if there is in the list
+        for (order in orderList) {
+            if (order.name == product.name) {
+                if (amount == 0) {
+                    orderList.remove(order)
+                } else {
+                    order.amount = amount
+                }
+                return
+            }
+        }
+
+        // Add new order to the list
+        orderList.add(Order(
+            name = product.name,
+            price = product.price,
+            imageUrl = product.imageUrl,
+            amount = amount
+        ))
+
+        // Sort by name when new order added
+        orderList.sortBy { it.name }
     }
 }

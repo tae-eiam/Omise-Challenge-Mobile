@@ -58,9 +58,9 @@
         app:layout_constraintStart_toEndOf="@id/llProductInfo">
 
         <ImageView
-            android:id="@+id/imgMinus"
-            android:layout_width="@dimen/_13sdp"
-            android:layout_height="@dimen/_13sdp"
+            android:id="@+id/imgRemove"
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
             android:src="@drawable/ic_minus" />
 
         <TextView
@@ -74,9 +74,9 @@
             android:textAlignment="center" />
 
         <ImageView
-            android:id="@+id/imgPlus"
-            android:layout_width="@dimen/_13sdp"
-            android:layout_height="@dimen/_13sdp"
+            android:id="@+id/imgAdd"
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
             android:src="@drawable/ic_plus" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>

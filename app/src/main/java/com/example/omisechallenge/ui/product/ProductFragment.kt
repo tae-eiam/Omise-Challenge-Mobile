@@ -18,6 +18,7 @@ import com.example.omisechallenge.domain.model.Product
 import com.example.omisechallenge.domain.model.Store
 import com.example.omisechallenge.ui.UiState
 import com.example.omisechallenge.ui.product.adapter.ProductAdapter
+import com.example.omisechallenge.ui.product.listener.OnEventTypeListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -96,7 +97,20 @@ class ProductFragment: Fragment() {
     }
 
     private fun initListeners() {
+        productAdapter.setOnProductEventTypeListener { onEventTypeListener ->
+            when(onEventTypeListener) {
+                is OnEventTypeListener.OnAddOrderClickListener -> {
+                    viewModel.updateOrder(onEventTypeListener.product, onEventTypeListener.amount)
+                }
+                is OnEventTypeListener.OnRemoveOrderClickListener -> {
+                    viewModel.updateOrder(onEventTypeListener.product, onEventTypeListener.amount)
+                }
+            }
+        }
 
+        binding.btnNext.setOnClickListener {
+
+        }
     }
 
     private fun subscribeToEvent() {
@@ -132,8 +146,6 @@ class ProductFragment: Fragment() {
             }
         }
     }
-
-
 
     override fun onDestroyView() {
         super.onDestroyView()
