@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.omisechallenge.R
+import com.example.omisechallenge.common.Constant
 import com.example.omisechallenge.databinding.FragmentProductBinding
 import com.example.omisechallenge.domain.model.Product
 import com.example.omisechallenge.domain.model.Store
@@ -102,7 +103,10 @@ class ProductFragment: BaseFragment() {
         }
 
         binding.btnNext.setOnClickListener {
-
+            val bundle = Bundle().apply {
+                putParcelableArrayList(Constant.ARGUMENT_ORDER_LIST, ArrayList(viewModel.orderList))
+            }
+            navigateTo(R.id.action_productFragment_to_summaryFragment, bundle)
         }
     }
 

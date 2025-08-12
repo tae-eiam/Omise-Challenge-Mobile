@@ -11,9 +11,9 @@
 
     <ImageView
         android:id="@+id/imgProduct"
-        android:scaleType="centerCrop"
         android:layout_width="@dimen/_32sdp"
         android:layout_height="@dimen/_32sdp"
+        android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

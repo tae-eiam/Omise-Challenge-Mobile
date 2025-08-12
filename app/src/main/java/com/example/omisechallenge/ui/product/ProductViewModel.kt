@@ -29,7 +29,8 @@ class ProductViewModel @Inject constructor(
     private var _productState = MutableStateFlow<UiState<List<Product>>>(UiState.Loading)
     val productState: StateFlow<UiState<List<Product>>> = _productState
 
-    val orderList: MutableList<Order> = mutableListOf()
+    private var _orderList: MutableList<Order> = mutableListOf()
+    val orderList: List<Order> = _orderList
 
     fun loadStoreInfo() {
         viewModelScope.launch {
@@ -78,10 +79,10 @@ class ProductViewModel @Inject constructor(
 
     fun updateOrder(product: Product, amount: Int) {
         // Check if there is in the list
-        for (order in orderList) {
+        for (order in _orderList) {
             if (order.name == product.name) {
                 if (amount == 0) {
-                    orderList.remove(order)
+                    _orderList.remove(order)
                 } else {
                     order.amount = amount
                 }
@@ -90,7 +91,7 @@ class ProductViewModel @Inject constructor(
         }
 
         // Add new order to the list
-        orderList.add(Order(
+        _orderList.add(Order(
             name = product.name,
             price = product.price,
             imageUrl = product.imageUrl,
@@ -98,6 +99,6 @@ class ProductViewModel @Inject constructor(
         ))
 
         // Sort by name when new order added
-        orderList.sortBy { it.name }
+        _orderList.sortBy { it.name }
     }
 }

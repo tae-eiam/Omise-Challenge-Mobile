@@ -7,6 +7,15 @@
     <fragment
         android:id="@+id/productFragment"
         android:name="com.example.omisechallenge.ui.product.ProductFragment"
-        android:label="Product" />
+        android:label="Product">
+        <action
+            android:id="@+id/action_productFragment_to_summaryFragment"
+            app:destination="@id/summaryFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/summaryFragment"
+        android:name="com.example.omisechallenge.ui.summary.SummaryFragment"
+        android:label="Summary" />
 
 </navigation>
