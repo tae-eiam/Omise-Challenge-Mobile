@@ -113,15 +113,19 @@ class ProductViewModel @Inject constructor(
             }
         }
 
-        // Add new order to the list
-        _selectedOrderList.add(Order(
-            name = order.name,
-            price = order.price,
-            imageUrl = order.imageUrl,
-            amount = order.amount
-        ))
+        if (order.amount > 0) {
+            // Add new order to the list
+            _selectedOrderList.add(
+                Order(
+                    name = order.name,
+                    price = order.price,
+                    imageUrl = order.imageUrl,
+                    amount = order.amount
+                )
+            )
 
-        // Sort by name when new order added
-        _selectedOrderList.sortBy { it.name }
+            // Sort by name when new order added
+            _selectedOrderList.sortBy { it.name }
+        }
     }
 }

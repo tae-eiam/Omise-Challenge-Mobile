@@ -67,6 +67,7 @@ class ProductFragment: BaseFragment() {
     override fun configViews() {
         viewModel.loadStoreInfo()
         viewModel.loadProducts()
+        configNextButton()
     }
 
     private fun configStoreInfo(info: Store) {
@@ -90,6 +91,10 @@ class ProductFragment: BaseFragment() {
         productAdapter.updateData(viewModel.convertProductListToOrderList(products))
     }
 
+    private fun configNextButton() {
+        binding.btnNext.isEnabled = viewModel.selectedOrderList.isNotEmpty()
+    }
+
     override fun initListeners() {
         productAdapter.setOnProductEventTypeListener { onEventTypeListener ->
             when(onEventTypeListener) {
@@ -100,6 +105,7 @@ class ProductFragment: BaseFragment() {
                     viewModel.updateOrder(onEventTypeListener.order)
                 }
             }
+            configNextButton()
         }
 
         binding.btnNext.setOnClickListener {

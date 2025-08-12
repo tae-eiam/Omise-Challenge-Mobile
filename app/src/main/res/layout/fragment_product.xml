@@ -135,14 +135,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/rvStoreProduct">
 
-        <Button
+        <TextView
             android:id="@+id/btnNext"
             style="@style/HeadingNeutral"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:stateListAnimator="@null"
-            android:text="@string/check_out" />
+            android:background="@drawable/bg_background"
+            android:paddingVertical="@dimen/_7sdp"
+            android:text="@string/check_out"
+            android:textAlignment="center" />
 
     </FrameLayout>
 
