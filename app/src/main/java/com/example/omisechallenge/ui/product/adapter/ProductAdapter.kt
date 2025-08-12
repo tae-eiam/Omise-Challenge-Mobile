@@ -4,13 +4,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.omisechallenge.databinding.ViewProductItemBinding
-import com.example.omisechallenge.domain.model.Product
+import com.example.omisechallenge.ui.model.Order
 import com.example.omisechallenge.ui.product.listener.OnEventTypeListener
 import com.example.omisechallenge.ui.product.listener.OnProductEventTypeListener
 import com.example.omisechallenge.ui.product.viewholder.ProductViewHolder
 
 class ProductAdapter(
-    private var items: MutableList<Product> = mutableListOf()
+    private var items: MutableList<Order> = mutableListOf()
 ) : RecyclerView.Adapter<ProductViewHolder>() {
     private var onProductEventTypeListener: OnProductEventTypeListener? = null
 
@@ -39,9 +39,9 @@ class ProductAdapter(
         return items.size
     }
 
-    fun updateData(products: List<Product>) {
+    fun updateData(orders: List<Order>) {
         items.clear()
-        items.addAll(products)
+        items.addAll(orders)
         notifyDataSetChanged()
     }
 

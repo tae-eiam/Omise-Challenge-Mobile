@@ -29,8 +29,8 @@ class ProductViewModel @Inject constructor(
     private var _productState = MutableStateFlow<UiState<List<Product>>>(UiState.Loading)
     val productState: StateFlow<UiState<List<Product>>> = _productState
 
-    private var _orderList: MutableList<Order> = mutableListOf()
-    val orderList: List<Order> = _orderList
+    private var _selectedOrderList: MutableList<Order> = mutableListOf()
+    val selectedOrderList: List<Order> = _selectedOrderList
 
     fun loadStoreInfo() {
         viewModelScope.launch {
@@ -77,28 +77,51 @@ class ProductViewModel @Inject constructor(
         return currentTime.isAfter(openingTime) || currentTime.isBefore(closingTime)
     }
 
-    fun updateOrder(product: Product, amount: Int) {
+    fun convertProductListToOrderList(productList: List<Product>): List<Order> {
+        val orderList = mutableListOf<Order>()
+
+        productList.forEach { product ->
+            orderList.add(Order().apply {
+                name = product.name
+                price = product.price
+                imageUrl = product.imageUrl
+            })
+        }
+
+        for (selectedOrder in selectedOrderList) {
+            for (order in orderList) {
+                if (selectedOrder.name == order.name) {
+                    order.amount = selectedOrder.amount
+                    break
+                }
+            }
+        }
+
+        return orderList
+    }
+
+    fun updateOrder(order: Order) {
         // Check if there is in the list
-        for (order in _orderList) {
-            if (order.name == product.name) {
-                if (amount == 0) {
-                    _orderList.remove(order)
+        for (selectedOrder in _selectedOrderList) {
+            if (selectedOrder.name == order.name) {
+                if (order.amount == 0) {
+                    _selectedOrderList.remove(selectedOrder)
                 } else {
-                    order.amount = amount
+                    selectedOrder.amount = order.amount
                 }
                 return
             }
         }
 
         // Add new order to the list
-        _orderList.add(Order(
-            name = product.name,
-            price = product.price,
-            imageUrl = product.imageUrl,
-            amount = amount
+        _selectedOrderList.add(Order(
+            name = order.name,
+            price = order.price,
+            imageUrl = order.imageUrl,
+            amount = order.amount
         ))
 
         // Sort by name when new order added
-        _orderList.sortBy { it.name }
+        _selectedOrderList.sortBy { it.name }
     }
 }

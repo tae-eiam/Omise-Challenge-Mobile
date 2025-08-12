@@ -87,24 +87,24 @@ class ProductFragment: BaseFragment() {
     }
 
     private fun configProducts(products: List<Product>) {
-        productAdapter.updateData(products)
+        productAdapter.updateData(viewModel.convertProductListToOrderList(products))
     }
 
     override fun initListeners() {
         productAdapter.setOnProductEventTypeListener { onEventTypeListener ->
             when(onEventTypeListener) {
                 is OnEventTypeListener.OnAddOrderClickListener -> {
-                    viewModel.updateOrder(onEventTypeListener.product, onEventTypeListener.amount)
+                    viewModel.updateOrder(onEventTypeListener.order)
                 }
                 is OnEventTypeListener.OnRemoveOrderClickListener -> {
-                    viewModel.updateOrder(onEventTypeListener.product, onEventTypeListener.amount)
+                    viewModel.updateOrder(onEventTypeListener.order)
                 }
             }
         }
 
         binding.btnNext.setOnClickListener {
             val bundle = Bundle().apply {
-                putParcelableArrayList(Constant.ARGUMENT_ORDER_LIST, ArrayList(viewModel.orderList))
+                putParcelableArrayList(Constant.ARGUMENT_ORDER_LIST, ArrayList(viewModel.selectedOrderList))
             }
             navigateTo(R.id.action_productFragment_to_summaryFragment, bundle)
         }
