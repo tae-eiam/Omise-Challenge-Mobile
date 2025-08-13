@@ -25,7 +25,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class ProductFragment: BaseFragment() {
+class ProductFragment : BaseFragment() {
     private var _binding: FragmentProductBinding? = null
     private val binding get() = _binding!!
     private val viewModel: ProductViewModel by viewModels()
@@ -83,7 +83,11 @@ class ProductFragment: BaseFragment() {
                 tvOpenDesc.isEnabled = false
             }
 
-            tvOpenHours.text = getString(R.string.store_open_hours, viewModel.convertTimeFormat(info.openingTime), viewModel.convertTimeFormat(info.closingTime))
+            tvOpenHours.text = getString(
+                R.string.store_open_hours,
+                viewModel.convertTimeFormat(info.openingTime),
+                viewModel.convertTimeFormat(info.closingTime)
+            )
         }
     }
 
@@ -97,10 +101,11 @@ class ProductFragment: BaseFragment() {
 
     override fun initListeners() {
         productAdapter.setOnProductEventTypeListener { onEventTypeListener ->
-            when(onEventTypeListener) {
+            when (onEventTypeListener) {
                 is OnEventTypeListener.OnAddOrderClickListener -> {
                     viewModel.updateOrder(onEventTypeListener.order)
                 }
+
                 is OnEventTypeListener.OnRemoveOrderClickListener -> {
                     viewModel.updateOrder(onEventTypeListener.order)
                 }
@@ -110,7 +115,10 @@ class ProductFragment: BaseFragment() {
 
         binding.btnNext.setOnClickListener {
             val bundle = Bundle().apply {
-                putParcelableArrayList(Constant.ARGUMENT_ORDER_LIST, ArrayList(viewModel.selectedOrderList))
+                putParcelableArrayList(
+                    Constant.ARGUMENT_ORDER_LIST,
+                    ArrayList(viewModel.selectedOrderList)
+                )
             }
             navigateTo(R.id.action_productFragment_to_summaryFragment, bundle)
         }
@@ -120,13 +128,21 @@ class ProductFragment: BaseFragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.storeState.collectLatest { state ->
-                    when(state) {
+                    when (state) {
                         is UiState.Idle -> Unit
                         is UiState.Loading -> Unit
-                        is UiState.Success -> { configStoreInfo(state.data) }
+                        is UiState.Success -> {
+                            configStoreInfo(state.data)
+                        }
+
                         is UiState.Error -> {
-                            binding.clStoreInfo.isVisible = false
-                            binding.tvError.isVisible = true
+                            with(binding) {
+                                clStoreInfo.isVisible = false
+                                rvStoreProduct.isVisible = false
+                                flButtonContainer.isVisible = false
+                                sectionDivider.isVisible = false
+                                tvError.isVisible = true
+                            }
                         }
                     }
                 }
@@ -136,15 +152,21 @@ class ProductFragment: BaseFragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.productState.collectLatest { state ->
-                    when(state) {
+                    when (state) {
                         is UiState.Idle -> Unit
                         is UiState.Loading -> Unit
                         is UiState.Success -> {
                             configProducts(state.data)
                         }
+
                         is UiState.Error -> {
-                            binding.clStoreInfo.isVisible = false
-                            binding.tvError.isVisible = true
+                            with(binding) {
+                                clStoreInfo.isVisible = false
+                                rvStoreProduct.isVisible = false
+                                flButtonContainer.isVisible = false
+                                sectionDivider.isVisible = false
+                                tvError.isVisible = true
+                            }
                         }
                     }
                 }
