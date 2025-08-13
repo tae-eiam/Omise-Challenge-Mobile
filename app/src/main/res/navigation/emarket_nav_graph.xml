@@ -25,6 +25,12 @@
     <fragment
         android:id="@+id/successFragment"
         android:name="com.example.omisechallenge.ui.success.SuccessFragment"
-        android:label="Success" />
+        android:label="Success">
+        <action
+            android:id="@+id/action_successFragment_to_productFragment"
+            app:destination="@id/productFragment"
+            app:popUpTo="@id/productFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
 
 </navigation>

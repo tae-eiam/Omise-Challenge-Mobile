@@ -13,4 +13,6 @@
     <string name="total">Total:</string>
     <string name="total_price">%s THB</string>
     <string name="confirm">Confirm</string>
+    <string name="all_set">You orders have been placed. You are all set.</string>
+    <string name="continue_ordering">Continue Ordering</string>
 </resources>
