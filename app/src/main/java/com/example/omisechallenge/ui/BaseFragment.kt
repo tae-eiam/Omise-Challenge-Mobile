@@ -11,7 +11,7 @@ abstract class BaseFragment: Fragment() {
     private val navController by lazy {
         requireActivity().findNavController(R.id.content_fragment)
     }
-    
+
     protected open fun initArguments() {
         // no op
     }

@@ -1,5 +1,7 @@
 package com.example.omisechallenge.data.repository
 
+import com.example.omisechallenge.data.ApiResult
+import com.example.omisechallenge.data.model.request.OrderRequest
 import com.example.omisechallenge.data.service.ApiService
 import com.example.omisechallenge.domain.model.Product
 import com.example.omisechallenge.domain.model.Store
@@ -9,18 +11,51 @@ class StoreRepositoryImpl @Inject constructor(
     private val apiService: ApiService
 ): StoreRepository {
 
-    override suspend fun getStoreInfo(): Store {
-        return apiService.getStoreInfo().toStore()
+    override suspend fun getStoreInfo(): ApiResult<Store> {
+        return try {
+            val response = apiService.getStoreInfo()
+            if (response.isSuccessful) {
+                ApiResult.Success(response.body()!!.toStore())
+            } else {
+                ApiResult.Error(response.code(), response.errorBody()?.string() ?: "Unknown error")
+            }
+        } catch (e: Exception) {
+            ApiResult.Error(-1, e.message ?: "Unknown error")
+        }
     }
 
-    override suspend fun getProducts(): List<Product> {
-        val productResponseList = apiService.getProducts()
-        val productList = mutableListOf<Product>()
+    override suspend fun getProducts(): ApiResult<List<Product>> {
+        return try {
+            val productList = mutableListOf<Product>()
+            val response = apiService.getProducts()
 
-        productResponseList.forEach { productResponse ->
-            productList.add(productResponse.toProduct())
+            if (response.isSuccessful) {
+                val productResponseList = response.body()
+
+                productResponseList?.forEach { productResponse ->
+                    productList.add(productResponse.toProduct())
+                }
+
+                ApiResult.Success(productList)
+            } else {
+                ApiResult.Error(response.code(), response.errorBody()?.string() ?: "Unknown error")
+            }
+        } catch (e: Exception) {
+            ApiResult.Error(-1, e.message ?: "Unknown error")
         }
+    }
 
-        return productList
+    override suspend fun makeOrder(orderRequest: OrderRequest): ApiResult<Unit> {
+        return try {
+            val response = apiService.makeOrder(orderRequest)
+
+            if (response.isSuccessful) {
+                ApiResult.Success(Unit)
+            } else {
+                ApiResult.Error(response.code(), response.errorBody()?.string() ?: "Unknown error")
+            }
+        } catch (e: Exception) {
+            ApiResult.Error(-1, e.message ?: "Unknown error")
+        }
     }
 }

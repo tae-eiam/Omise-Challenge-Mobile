@@ -121,6 +121,7 @@ class ProductFragment: BaseFragment() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.storeState.collectLatest { state ->
                     when(state) {
+                        is UiState.Idle -> Unit
                         is UiState.Loading -> Unit
                         is UiState.Success -> { configStoreInfo(state.data) }
                         is UiState.Error -> {
@@ -136,6 +137,7 @@ class ProductFragment: BaseFragment() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.productState.collectLatest { state ->
                     when(state) {
+                        is UiState.Idle -> Unit
                         is UiState.Loading -> Unit
                         is UiState.Success -> {
                             configProducts(state.data)

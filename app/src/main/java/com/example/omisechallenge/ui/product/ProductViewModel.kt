@@ -2,6 +2,7 @@ package com.example.omisechallenge.ui.product
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.omisechallenge.data.ApiResult
 import com.example.omisechallenge.domain.model.Product
 import com.example.omisechallenge.domain.model.Store
 import com.example.omisechallenge.domain.usecase.StoreUseCase
@@ -23,10 +24,10 @@ import javax.inject.Inject
 class ProductViewModel @Inject constructor(
     private val storeUseCase: StoreUseCase
 ) : ViewModel() {
-    private var _storeState = MutableStateFlow<UiState<Store>>(UiState.Loading)
+    private var _storeState = MutableStateFlow<UiState<Store>>(UiState.Idle)
     val storeState: StateFlow<UiState<Store>> = _storeState
 
-    private var _productState = MutableStateFlow<UiState<List<Product>>>(UiState.Loading)
+    private var _productState = MutableStateFlow<UiState<List<Product>>>(UiState.Idle)
     val productState: StateFlow<UiState<List<Product>>> = _productState
 
     private var _selectedOrderList: MutableList<Order> = mutableListOf()
@@ -35,11 +36,10 @@ class ProductViewModel @Inject constructor(
     fun loadStoreInfo() {
         viewModelScope.launch {
             _storeState.value = UiState.Loading
-            try {
-                val storeInfo = storeUseCase.getStoreInfo()
-                _storeState.value = UiState.Success(storeInfo)
-            } catch (e: Exception) {
-                _storeState.value = UiState.Error(e.message.toString())
+            val storeInfo = storeUseCase.getStoreInfo()
+            when(storeInfo) {
+                is ApiResult.Success -> _storeState.value = UiState.Success(storeInfo.data)
+                is ApiResult.Error -> _storeState.value = UiState.Error(storeInfo.message)
             }
         }
     }
@@ -47,11 +47,10 @@ class ProductViewModel @Inject constructor(
     fun loadProducts() {
         viewModelScope.launch {
             _productState.value = UiState.Loading
-            try {
-                val products = storeUseCase.getProducts()
-                _productState.value = UiState.Success(products)
-            } catch (e: Exception) {
-                _productState.value = UiState.Error(e.message.toString())
+            val products = storeUseCase.getProducts()
+            when(products) {
+                is ApiResult.Success -> _productState.value = UiState.Success(products.data)
+                is ApiResult.Error -> _productState.value = UiState.Error(products.message)
             }
         }
     }

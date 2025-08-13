@@ -6,14 +6,20 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.omisechallenge.R
 import com.example.omisechallenge.common.Constant
 import com.example.omisechallenge.databinding.FragmentSummaryBinding
 import com.example.omisechallenge.ui.BaseFragment
+import com.example.omisechallenge.ui.UiState
 import com.example.omisechallenge.ui.model.Order
 import com.example.omisechallenge.ui.summary.adapter.SummaryAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SummaryFragment : BaseFragment() {
@@ -67,11 +73,31 @@ class SummaryFragment : BaseFragment() {
     }
 
     override fun initListeners() {
-        // no op
+        binding.btnConfirm.setOnClickListener {
+            viewModel.validatePayment()
+        }
     }
 
     override fun subscribeToEvents() {
-        // no op
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.paymentState.collectLatest { state ->
+                    when(state) {
+                        is UiState.Idle -> Unit
+                        is UiState.Loading -> {
+                            binding.pgbLoading.show()
+                        }
+                        is UiState.Success -> {
+                            binding.pgbLoading.hide()
+                            navigateTo(R.id.action_summaryFragment_to_successFragment)
+                        }
+                        is UiState.Error -> {
+                            binding.pgbLoading.hide()
+                        }
+                    }
+                }
+            }
+        }
     }
 
     override fun configViews() {
