@@ -14,9 +14,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.LocalDate
-import java.time.OffsetTime
 import java.time.ZoneId
 import java.time.ZoneOffset
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
@@ -66,14 +66,22 @@ class ProductViewModel @Inject constructor(
     }
 
     fun isStoreOpen(openingTimeString: String, closingTimeString: String): Boolean {
-        val openingTime = OffsetTime.parse(openingTimeString)
-        val closingTime = OffsetTime.parse(closingTimeString)
-        val currentTime = OffsetTime.now(ZoneId.systemDefault())
+        val zone = ZoneId.systemDefault()
+        val today = LocalDate.now(ZoneOffset.UTC)
 
-        if (openingTime.isBefore(closingTime)) {
-            return currentTime.isAfter(openingTime) && currentTime.isBefore(closingTime)
+        val openingInstant = Instant.parse("${today}T$openingTimeString")
+        val closingInstant = Instant.parse("${today}T$closingTimeString")
+
+        val openingTime = openingInstant.atZone(zone)
+        var closingTime = closingInstant.atZone(zone)
+
+        if (closingTime.isBefore(openingTime)) {
+            closingTime = closingTime.plusDays(1)
         }
-        return currentTime.isAfter(openingTime) || currentTime.isBefore(closingTime)
+
+        val currentTime = ZonedDateTime.now(zone)
+
+        return currentTime.isAfter(openingTime) && currentTime.isBefore(closingTime)
     }
 
     fun convertProductListToOrderList(productList: List<Product>): List<Order> {
