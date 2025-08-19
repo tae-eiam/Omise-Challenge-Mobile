@@ -3,7 +3,7 @@ package com.example.omisechallenge.domain.usecase
 import com.example.omisechallenge.data.ApiResult
 import com.example.omisechallenge.data.model.request.OrderRequest
 import com.example.omisechallenge.data.repository.StoreRepository
-import com.example.omisechallenge.domain.model.Product
+import com.example.omisechallenge.domain.model.ProductResult
 import com.example.omisechallenge.domain.model.Store
 import javax.inject.Inject
 
@@ -15,8 +15,8 @@ class StoreUseCaseImpl @Inject constructor(
         return storeRepository.getStoreInfo()
     }
 
-    override suspend fun getProducts(): ApiResult<List<Product>> {
-        return storeRepository.getProducts()
+    override suspend fun getProducts(page: Int): ApiResult<ProductResult> {
+        return storeRepository.getProducts(page)
     }
 
     override suspend fun makeOrder(orderRequest: OrderRequest): ApiResult<Unit> {

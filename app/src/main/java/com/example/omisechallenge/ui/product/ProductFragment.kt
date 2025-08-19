@@ -5,12 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.omisechallenge.R
 import com.example.omisechallenge.common.Constant
 import com.example.omisechallenge.databinding.FragmentProductBinding
@@ -66,12 +68,12 @@ class ProductFragment : BaseFragment() {
 
     override fun configViews() {
         viewModel.loadStoreInfo()
-        viewModel.loadProducts()
-        configNextButton()
     }
 
     private fun configStoreInfo(info: Store) {
         with(binding) {
+            clStoreInfo.isVisible = true
+            sectionDivider.isVisible = true
             tvStoreName.text = info.name
             tvRating.text = info.rating.toString()
 
@@ -92,14 +94,43 @@ class ProductFragment : BaseFragment() {
     }
 
     private fun configProducts(products: List<Product>) {
-        productAdapter.updateData(viewModel.convertProductListToOrderList(products))
+        productAdapter.updateData(
+            orders = viewModel.convertProductListToOrderList(products),
+            isLoadMore = !viewModel.isLastPage
+        )
     }
 
     private fun configNextButton() {
+        binding.flButtonContainer.isVisible = true
         binding.btnNext.isEnabled = viewModel.selectedOrderList.isNotEmpty()
     }
 
+    private fun showError() {
+        with(binding) {
+            clStoreInfo.isVisible = false
+            sectionDivider.isVisible = false
+            rvStoreProduct.isVisible = false
+            flButtonContainer.isVisible = false
+            tvError.isVisible = true
+        }
+    }
+
     override fun initListeners() {
+        binding.rvStoreProduct.addOnScrollListener(object : RecyclerView.OnScrollListener(){
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                val visibleItemCount = layoutManager.childCount
+                val totalItemCount = layoutManager.itemCount
+                val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+
+                if (visibleItemCount + firstVisibleItemPosition >= totalItemCount && firstVisibleItemPosition >= 0) {
+                    viewModel.loadProducts()
+                }
+            }
+        })
+
         productAdapter.setOnProductEventTypeListener { onEventTypeListener ->
             when (onEventTypeListener) {
                 is OnEventTypeListener.OnAddOrderClickListener -> {
@@ -133,17 +164,9 @@ class ProductFragment : BaseFragment() {
                         is UiState.Loading -> Unit
                         is UiState.Success -> {
                             configStoreInfo(state.data)
+                            configNextButton()
                         }
-
-                        is UiState.Error -> {
-                            with(binding) {
-                                clStoreInfo.isVisible = false
-                                rvStoreProduct.isVisible = false
-                                flButtonContainer.isVisible = false
-                                sectionDivider.isVisible = false
-                                tvError.isVisible = true
-                            }
-                        }
+                        is UiState.Error -> showError()
                     }
                 }
             }
@@ -155,19 +178,8 @@ class ProductFragment : BaseFragment() {
                     when (state) {
                         is UiState.Idle -> Unit
                         is UiState.Loading -> Unit
-                        is UiState.Success -> {
-                            configProducts(state.data)
-                        }
-
-                        is UiState.Error -> {
-                            with(binding) {
-                                clStoreInfo.isVisible = false
-                                rvStoreProduct.isVisible = false
-                                flButtonContainer.isVisible = false
-                                sectionDivider.isVisible = false
-                                tvError.isVisible = true
-                            }
-                        }
+                        is UiState.Success -> configProducts(state.data)
+                        is UiState.Error -> showError()
                     }
                 }
             }

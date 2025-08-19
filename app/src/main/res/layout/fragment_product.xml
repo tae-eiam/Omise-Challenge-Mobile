@@ -26,10 +26,12 @@
         android:layout_margin="@dimen/_13sdp"
         android:background="@drawable/bg_white_round_corners"
         android:padding="@dimen/_13sdp"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@id/sectionDivider"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar">
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        tools:visibility="visible">
 
         <TextView
             android:id="@+id/tvStoreName"
@@ -105,10 +107,12 @@
         android:layout_height="@dimen/_1sdp"
         android:layout_marginHorizontal="@dimen/_13sdp"
         android:background="@color/darkgrey"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@id/rvStoreProduct"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/clStoreInfo" />
+        app:layout_constraintTop_toBottomOf="@id/clStoreInfo"
+        tools:visibility="visible" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvStoreProduct"
@@ -130,10 +134,12 @@
         android:background="@color/white"
         android:paddingHorizontal="@dimen/_27sdp"
         android:paddingVertical="@dimen/_7sdp"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rvStoreProduct">
+        app:layout_constraintTop_toBottomOf="@id/rvStoreProduct"
+        tools:visibility="visible">
 
         <TextView
             android:id="@+id/btnNext"
@@ -142,6 +148,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:background="@drawable/bg_background"
+            android:enabled="false"
             android:paddingVertical="@dimen/_7sdp"
             android:text="@string/check_out"
             android:textAlignment="center" />

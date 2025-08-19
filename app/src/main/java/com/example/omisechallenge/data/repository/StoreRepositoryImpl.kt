@@ -4,6 +4,7 @@ import com.example.omisechallenge.data.ApiResult
 import com.example.omisechallenge.data.model.request.OrderRequest
 import com.example.omisechallenge.data.service.ApiService
 import com.example.omisechallenge.domain.model.Product
+import com.example.omisechallenge.domain.model.ProductResult
 import com.example.omisechallenge.domain.model.Store
 import javax.inject.Inject
 
@@ -24,19 +25,11 @@ class StoreRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getProducts(): ApiResult<List<Product>> {
+    override suspend fun getProducts(page: Int): ApiResult<ProductResult> {
         return try {
-            val productList = mutableListOf<Product>()
-            val response = apiService.getProducts()
-
+            val response = apiService.getProducts(page)
             if (response.isSuccessful) {
-                val productResponseList = response.body()
-
-                productResponseList?.forEach { productResponse ->
-                    productList.add(productResponse.toProduct())
-                }
-
-                ApiResult.Success(productList)
+                ApiResult.Success(response.body()!!.data!!.productResultResponse!!.toProductResult())
             } else {
                 ApiResult.Error(response.code(), response.errorBody()?.string() ?: "Unknown error")
             }

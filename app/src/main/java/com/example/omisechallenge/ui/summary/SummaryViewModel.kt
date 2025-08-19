@@ -56,6 +56,7 @@ class SummaryViewModel @Inject constructor(): ViewModel() {
 
         orderList.forEach { order ->
             productList.add(Product(
+                id = order.id,
                 name = order.name,
                 price = order.price,
                 imageUrl = order.imageUrl

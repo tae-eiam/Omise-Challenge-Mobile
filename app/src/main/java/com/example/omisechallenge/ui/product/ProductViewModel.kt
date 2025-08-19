@@ -33,24 +33,47 @@ class ProductViewModel @Inject constructor(
     private var _selectedOrderList: MutableList<Order> = mutableListOf()
     val selectedOrderList: List<Order> = _selectedOrderList
 
+    var isLastPage = false
+    private var currentPage = 1
+    private var productList = mutableListOf<Product>()
+
     fun loadStoreInfo() {
-        viewModelScope.launch {
-            _storeState.value = UiState.Loading
-            val storeInfo = storeUseCase.getStoreInfo()
-            when(storeInfo) {
-                is ApiResult.Success -> _storeState.value = UiState.Success(storeInfo.data)
-                is ApiResult.Error -> _storeState.value = UiState.Error(storeInfo.message)
+        if (_storeState.value is UiState.Idle) {
+            viewModelScope.launch {
+                _storeState.value = UiState.Loading
+                val storeInfo = storeUseCase.getStoreInfo()
+                when(storeInfo) {
+                    is ApiResult.Success -> {
+                        _storeState.value = UiState.Success(storeInfo.data)
+                        loadProducts()
+                    }
+                    is ApiResult.Error -> _storeState.value = UiState.Error(storeInfo.message)
+                }
             }
         }
     }
 
     fun loadProducts() {
+        if (_productState.value is UiState.Loading || isLastPage) {
+            return
+        }
+
         viewModelScope.launch {
             _productState.value = UiState.Loading
-            val products = storeUseCase.getProducts()
+            val products = storeUseCase.getProducts(currentPage)
             when(products) {
-                is ApiResult.Success -> _productState.value = UiState.Success(products.data)
-                is ApiResult.Error -> _productState.value = UiState.Error(products.message)
+                is ApiResult.Success -> {
+                    if (currentPage >= products.data.paginationInfo.totalPages) {
+                        isLastPage = true
+                    }
+
+                    productList.addAll(products.data.productList)
+                    _productState.value = UiState.Success(productList)
+                    currentPage++
+                }
+                is ApiResult.Error -> {
+                    _productState.value = UiState.Error(products.message)
+                }
             }
         }
     }
@@ -89,6 +112,7 @@ class ProductViewModel @Inject constructor(
 
         productList.forEach { product ->
             orderList.add(Order().apply {
+                id = product.id
                 name = product.name
                 price = product.price
                 imageUrl = product.imageUrl
@@ -97,7 +121,7 @@ class ProductViewModel @Inject constructor(
 
         for (selectedOrder in selectedOrderList) {
             for (order in orderList) {
-                if (selectedOrder.name == order.name) {
+                if (selectedOrder.id == order.id) {
                     order.amount = selectedOrder.amount
                     break
                 }
@@ -110,7 +134,7 @@ class ProductViewModel @Inject constructor(
     fun updateOrder(order: Order) {
         // Check if there is in the list
         for (selectedOrder in _selectedOrderList) {
-            if (selectedOrder.name == order.name) {
+            if (selectedOrder.id == order.id) {
                 if (order.amount == 0) {
                     _selectedOrderList.remove(selectedOrder)
                 } else {
@@ -124,6 +148,7 @@ class ProductViewModel @Inject constructor(
             // Add new order to the list
             _selectedOrderList.add(
                 Order(
+                    id = order.id,
                     name = order.name,
                     price = order.price,
                     imageUrl = order.imageUrl,
@@ -132,7 +157,7 @@ class ProductViewModel @Inject constructor(
             )
 
             // Sort by name when new order added
-            _selectedOrderList.sortBy { it.name }
+            _selectedOrderList.sortBy { it.id }
         }
     }
 }

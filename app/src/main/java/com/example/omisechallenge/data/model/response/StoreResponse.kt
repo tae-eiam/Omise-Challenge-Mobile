@@ -1,12 +1,13 @@
 package com.example.omisechallenge.data.model.response
 
 import com.example.omisechallenge.domain.model.Store
+import com.google.gson.annotations.SerializedName
 
 data class StoreResponse(
-    val name: String?,
-    val rating: Double?,
-    val openingTime: String?,
-    val closingTime: String?
+    @SerializedName("name") val name: String?,
+    @SerializedName("rating") val rating: Double?,
+    @SerializedName("openingTime") val openingTime: String?,
+    @SerializedName("closingTime") val closingTime: String?
 ) {
     fun toStore(): Store {
         return Store(
