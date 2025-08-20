@@ -7,12 +7,16 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
 import com.example.omisechallenge.R
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class HomeActivity : AppCompatActivity() {
+    val navController: NavController
+        get() = findNavController(R.id.content_fragment)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -26,8 +30,9 @@ class HomeActivity : AppCompatActivity() {
 
         WindowCompat.setDecorFitsSystemWindows(window, true)
         window.statusBarColor = ContextCompat.getColor(this, R.color.orange)
+    }
 
-        val navController = (supportFragmentManager.findFragmentById(R.id.content_fragment) as NavHostFragment).navController
-        navController.setGraph(R.navigation.emarket_nav_graph)
+    override fun onSupportNavigateUp(): Boolean {
+        return navController.popBackStack()
     }
 }

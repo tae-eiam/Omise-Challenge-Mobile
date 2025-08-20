@@ -4,14 +4,9 @@ import android.os.Bundle
 import android.view.View
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
-import com.example.omisechallenge.R
+import androidx.navigation.fragment.findNavController
 
 abstract class BaseFragment: Fragment() {
-    private val navController by lazy {
-        requireActivity().findNavController(R.id.content_fragment)
-    }
-
     protected open fun initArguments() {
         // no op
     }
@@ -36,6 +31,6 @@ abstract class BaseFragment: Fragment() {
     }
 
     protected open fun navigateTo(@IdRes actionId: Int, args: Bundle? = null) {
-        navController.navigate(actionId, args)
+        findNavController().navigate(actionId, args)
     }
 }
