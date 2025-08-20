@@ -1,9 +1,7 @@
 package com.example.omisechallenge.ui
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -19,7 +17,6 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_home)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.clRoot)) { v, insets ->
@@ -28,8 +25,7 @@ class HomeActivity : AppCompatActivity() {
             insets
         }
 
-        WindowCompat.setDecorFitsSystemWindows(window, true)
-        window.statusBarColor = ContextCompat.getColor(this, R.color.orange)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
     }
 
     override fun onSupportNavigateUp(): Boolean {
