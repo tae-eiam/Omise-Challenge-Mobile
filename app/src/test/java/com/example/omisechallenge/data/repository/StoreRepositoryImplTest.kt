@@ -2,14 +2,22 @@ package com.example.omisechallenge.data.repository
 
 import com.example.omisechallenge.data.ApiResult
 import com.example.omisechallenge.data.model.request.OrderRequest
+import com.example.omisechallenge.data.model.response.OrderResponse
+import com.example.omisechallenge.data.model.response.PaginationInfoResponse
+import com.example.omisechallenge.data.model.response.ProductApiResponse
+import com.example.omisechallenge.data.model.response.ProductDataResponse
 import com.example.omisechallenge.data.model.response.ProductResponse
+import com.example.omisechallenge.data.model.response.ProductResultResponse
 import com.example.omisechallenge.data.model.response.StoreResponse
 import com.example.omisechallenge.data.service.ApiService
+import com.example.omisechallenge.domain.model.PaginationInfo
 import com.example.omisechallenge.domain.model.Product
 import com.example.omisechallenge.domain.model.Store
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -44,6 +52,7 @@ class StoreRepositoryImplTest {
                 openingTime = "15:01:01.772Z",
                 closingTime = "19:45:51.365Z"
             )
+
             val expectedStore = Store(
                 name = "Mock Store",
                 rating = 4.5,
@@ -51,7 +60,11 @@ class StoreRepositoryImplTest {
                 closingTime = "19:45:51.365Z"
             )
 
-            coEvery { apiService.getStoreInfo() } returns Response.success(storeResponse)
+            val mockResponse = mockk<Response<StoreResponse>>(relaxed = true)
+
+            every { mockResponse.isSuccessful } returns true
+            every { mockResponse.body() } returns storeResponse
+            coEvery { apiService.getStoreInfo() } returns mockResponse
 
             // When
             val result = repository.getStoreInfo()
@@ -61,8 +74,7 @@ class StoreRepositoryImplTest {
             assertEquals(expectedStore.name, (result as ApiResult.Success).data.name)
             assertEquals(expectedStore.rating, result.data.rating)
             assertEquals(expectedStore.openingTime, result.data.openingTime)
-            assertEquals(expectedStore.closingTime, result.data.closingTime
-            )
+            assertEquals(expectedStore.closingTime, result.data.closingTime)
         }
     }
 
@@ -72,8 +84,12 @@ class StoreRepositoryImplTest {
             // Given
             val errorBodyMessage = "Mock Error"
             val errorBody = errorBodyMessage.toResponseBody("application/json".toMediaTypeOrNull())
+            val mockResponse = mockk<Response<StoreResponse>>(relaxed = true)
 
-            coEvery { apiService.getStoreInfo() } returns Response.error(500, errorBody)
+            every { mockResponse.isSuccessful } returns false
+            every { mockResponse.code() } returns 500
+            every { mockResponse.errorBody() } returns errorBody
+            coEvery { apiService.getStoreInfo() } returns mockResponse
 
             // When
             val result = repository.getStoreInfo()
@@ -82,6 +98,27 @@ class StoreRepositoryImplTest {
             assertTrue(result is ApiResult.Error)
             assertEquals(500, (result as ApiResult.Error).code)
             assertEquals(errorBodyMessage, result.message)
+        }
+    }
+
+    @Test
+    fun getStoreInfo_loadFailed_withoutErrorBody_returnError() {
+        runTest {
+            // Given
+            val mockResponse = mockk<Response<StoreResponse>>(relaxed = true)
+
+            every { mockResponse.isSuccessful } returns false
+            every { mockResponse.code() } returns 500
+            every { mockResponse.errorBody() } returns null
+            coEvery { apiService.getStoreInfo() } returns mockResponse
+
+            // When
+            val result = repository.getStoreInfo()
+
+            // Then
+            assertTrue(result is ApiResult.Error)
+            assertEquals(500, (result as ApiResult.Error).code)
+            assertEquals("Unknown error", result.message)
         }
     }
 
@@ -103,47 +140,64 @@ class StoreRepositoryImplTest {
     }
 
     @Test
-    fun getProducts_loadSuccessful_haveProducts_returnSuccess() {
+    fun getStoreInfo_throwUnknownException_returnError() {
         runTest {
             // Given
-            val productListResponse = listOf(ProductResponse(
-                name = "Mock Product",
-                price = 30,
-                imageUrl = "Mock Image Url"
-            ))
+            val mockResponse = mockk<Response<StoreResponse>>(relaxed = true)
 
-            val expectedProductList = listOf(Product(
-                name = "Mock Product",
-                price = 30,
-                imageUrl = "Mock Image Url"
-            ))
-
-            coEvery { apiService.getProducts() } returns Response.success(productListResponse)
+            every { mockResponse.isSuccessful } returns true
+            every { mockResponse.body() } returns null
+            coEvery { apiService.getStoreInfo() } returns mockResponse
 
             // When
-            val result = repository.getProducts()
+            val result = repository.getStoreInfo()
 
             // Then
-            assertTrue(result is ApiResult.Success)
-            assertEquals(1, (result as ApiResult.Success).data.size)
-            assertEquals(expectedProductList[0].name, result.data[0].name)
-            assertEquals(expectedProductList[0].price, result.data[0].price)
-            assertEquals(expectedProductList[0].imageUrl, result.data[0].imageUrl)
+            assertTrue(result is ApiResult.Error)
+            assertEquals(-1, (result as ApiResult.Error).code)
+            assertEquals("Unknown error", result.message)
         }
     }
 
     @Test
-    fun getProducts_loadSuccessful_haveNoProduct_returnSuccess() {
+    fun getProducts_loadSuccessful_returnSuccess() {
         runTest {
             // Given
-            coEvery { apiService.getProducts() } returns Response.success(null)
+            val mockPaginationInfoResponse = PaginationInfoResponse(10, 1, 1)
+            val mockProductListResponse = listOf(
+                ProductResponse(1, "Mock Product", 30, "Mock Image Url")
+            )
+            val mockProductApiResponse = ProductApiResponse(
+                data = ProductDataResponse(
+                    productResultResponse = ProductResultResponse(mockPaginationInfoResponse, mockProductListResponse)
+                )
+            )
+
+            val expectedPaginationInfo = PaginationInfo(10, 1, 1)
+            val expectedProductList = listOf(
+                Product(1, "Mock Product", 30, "Mock Image Url")
+            )
+
+            val mockResponse = mockk<Response<ProductApiResponse>>(relaxed = true)
+
+            every { mockResponse.isSuccessful } returns true
+            every { mockResponse.body() } returns mockProductApiResponse
+            coEvery { apiService.getProducts() } returns mockResponse
 
             // When
             val result = repository.getProducts()
 
             // Then
             assertTrue(result is ApiResult.Success)
-            assertEquals(0, (result as ApiResult.Success).data.size)
+            assertEquals(expectedPaginationInfo.totalCount, (result as ApiResult.Success).data.paginationInfo.totalCount)
+            assertEquals(expectedPaginationInfo.currentPage, result.data.paginationInfo.currentPage)
+            assertEquals(expectedPaginationInfo.totalPages, result.data.paginationInfo.totalPages)
+
+            assertEquals(1, result.data.productList.size)
+            assertEquals(expectedProductList[0].id, result.data.productList[0].id)
+            assertEquals(expectedProductList[0].name, result.data.productList[0].name)
+            assertEquals(expectedProductList[0].price, result.data.productList[0].price)
+            assertEquals(expectedProductList[0].imageUrl, result.data.productList[0].imageUrl)
         }
     }
 
@@ -153,8 +207,12 @@ class StoreRepositoryImplTest {
             // Given
             val errorBodyMessage = "Mock Error"
             val errorBody = errorBodyMessage.toResponseBody("application/json".toMediaTypeOrNull())
+            val mockResponse = mockk<Response<ProductApiResponse>>(relaxed = true)
 
-            coEvery { apiService.getProducts() } returns Response.error(500, errorBody)
+            every { mockResponse.isSuccessful } returns false
+            every { mockResponse.code() } returns 500
+            every { mockResponse.errorBody() } returns errorBody
+            coEvery { apiService.getProducts() } returns mockResponse
 
             // When
             val result = repository.getProducts()
@@ -163,6 +221,27 @@ class StoreRepositoryImplTest {
             assertTrue(result is ApiResult.Error)
             assertEquals(500, (result as ApiResult.Error).code)
             assertEquals(errorBodyMessage, result.message)
+        }
+    }
+
+    @Test
+    fun getProducts_loadFailed_withoutErrorBody_returnError() {
+        runTest {
+            // Given
+            val mockResponse = mockk<Response<ProductApiResponse>>(relaxed = true)
+
+            every { mockResponse.isSuccessful } returns false
+            every { mockResponse.code() } returns 500
+            every { mockResponse.errorBody() } returns null
+            coEvery { apiService.getProducts() } returns mockResponse
+
+            // When
+            val result = repository.getProducts()
+
+            // Then
+            assertTrue(result is ApiResult.Error)
+            assertEquals(500, (result as ApiResult.Error).code)
+            assertEquals("Unknown error", result.message)
         }
     }
 
@@ -184,23 +263,37 @@ class StoreRepositoryImplTest {
     }
 
     @Test
+    fun getProducts_throwUnknownException_returnError() {
+        runTest {
+            // Given
+            val mockResponse = mockk<Response<ProductApiResponse>>(relaxed = true)
+
+            every { mockResponse.isSuccessful } returns true
+            every { mockResponse.body() } returns null
+            coEvery { apiService.getProducts() } returns mockResponse
+
+            // When
+            val result = repository.getProducts()
+
+            // Then
+            assertTrue(result is ApiResult.Error)
+            assertEquals(-1, (result as ApiResult.Error).code)
+            assertEquals("Unknown error", result.message)
+        }
+    }
+
+    @Test
     fun makeOrder_loadSuccessful_returnSuccess() {
         runTest {
             // Given
-            val orderRequest = OrderRequest(
-                products = listOf(Product(
-                    name = "Mock Product",
-                    price = 30,
-                    imageUrl = "Mock Image Url"
-                )),
-                delivery_address = "Mock Address"
-            )
+            val mockOrderRequest = OrderRequest("Mock Product", 30, "Mock Address")
+            val mockResponse = mockk<Response<OrderResponse>>(relaxed = true)
 
-            val responseBody = "".toResponseBody("application/json".toMediaTypeOrNull())
-            coEvery { apiService.makeOrder(orderRequest) } returns Response.success(responseBody)
+            every { mockResponse.isSuccessful } returns true
+            coEvery { apiService.makeOrder(mockOrderRequest) } returns mockResponse
 
             // When
-            val result = repository.makeOrder(orderRequest)
+            val result = repository.makeOrder(mockOrderRequest)
 
             // Then
             assertTrue(result is ApiResult.Success)
@@ -211,22 +304,18 @@ class StoreRepositoryImplTest {
     fun makeOrder_loadFailed_withErrorBody_returnError() {
         runTest {
             // Given
-            val orderRequest = OrderRequest(
-                products = listOf(Product(
-                    name = "Mock Product",
-                    price = 30,
-                    imageUrl = "Mock Image Url"
-                )),
-                delivery_address = "Mock Address"
-            )
-
             val errorBodyMessage = "Mock Error"
             val errorBody = errorBodyMessage.toResponseBody("application/json".toMediaTypeOrNull())
+            val mockOrderRequest = OrderRequest("Mock Product", 30, "Mock Address")
+            val mockResponse = mockk<Response<OrderResponse>>(relaxed = true)
 
-            coEvery { apiService.makeOrder(orderRequest) } returns Response.error(500, errorBody)
+            every { mockResponse.isSuccessful } returns false
+            every { mockResponse.code() } returns 500
+            every { mockResponse.errorBody() } returns errorBody
+            coEvery { apiService.makeOrder(mockOrderRequest) } returns mockResponse
 
             // When
-            val result = repository.makeOrder(orderRequest)
+            val result = repository.makeOrder(mockOrderRequest)
 
             // Then
             assertTrue(result is ApiResult.Error)
@@ -236,23 +325,37 @@ class StoreRepositoryImplTest {
     }
 
     @Test
+    fun makeOrder_loadFailed_withoutErrorBody_returnError() {
+        runTest {
+            // Given
+            val mockOrderRequest = OrderRequest("Mock Product", 30, "Mock Address")
+            val mockResponse = mockk<Response<OrderResponse>>(relaxed = true)
+
+            every { mockResponse.isSuccessful } returns false
+            every { mockResponse.code() } returns 500
+            every { mockResponse.errorBody() } returns null
+            coEvery { apiService.makeOrder(mockOrderRequest) } returns mockResponse
+
+            // When
+            val result = repository.makeOrder(mockOrderRequest)
+
+            // Then
+            assertTrue(result is ApiResult.Error)
+            assertEquals(500, (result as ApiResult.Error).code)
+            assertEquals("Unknown error", result.message)
+        }
+    }
+
+    @Test
     fun makeOrder_throwException_returnError() {
         runTest {
             // Given
-            val orderRequest = OrderRequest(
-                products = listOf(Product(
-                    name = "Mock Product",
-                    price = 30,
-                    imageUrl = "Mock Image Url"
-                )),
-                delivery_address = "Mock Address"
-            )
-
+            val mockOrderRequest = OrderRequest("Mock Product", 30, "Mock Address")
             val errorBodyMessage = "Mock Exception"
-            coEvery { apiService.makeOrder(orderRequest) } throws IOException(errorBodyMessage)
+            coEvery { apiService.makeOrder(mockOrderRequest) } throws IOException(errorBodyMessage)
 
             // When
-            val result = repository.makeOrder(orderRequest)
+            val result = repository.makeOrder(mockOrderRequest)
 
             // Then
             assertTrue(result is ApiResult.Error)
@@ -261,4 +364,20 @@ class StoreRepositoryImplTest {
         }
     }
 
+    @Test
+    fun makeOrder_throwUnknownException_returnError() {
+        runTest {
+            // Given
+            val mockOrderRequest = OrderRequest("Mock Product", 30, "Mock Address")
+            coEvery { apiService.makeOrder(mockOrderRequest) } throws IOException()
+
+            // When
+            val result = repository.makeOrder(mockOrderRequest)
+
+            // Then
+            assertTrue(result is ApiResult.Error)
+            assertEquals(-1, (result as ApiResult.Error).code)
+            assertEquals("Unknown error", result.message)
+        }
+    }
 }

@@ -60,6 +60,7 @@ class SummaryViewModelTest {
         // Given
         val orderList = listOf(
             Order(
+                id = 1,
                 name = "Mock Order 1",
                 price = 30,
                 imageUrl = "Mock Image Url",
@@ -80,12 +81,14 @@ class SummaryViewModelTest {
         // Given
         val orderList = listOf(
             Order(
+                id = 1,
                 name = "Mock Order 1",
                 price = 30,
                 imageUrl = "Mock Image Url",
                 amount = 3
             ),
             Order(
+                id = 2,
                 name = "Mock Order 2",
                 price = 40,
                 imageUrl = "Mock Image Url",
@@ -107,6 +110,7 @@ class SummaryViewModelTest {
             // Given
             val orderList = listOf(
                 Order(
+                    id = 1,
                     name = "Mock Order 1",
                     price = 30,
                     imageUrl = "Mock Image Url",

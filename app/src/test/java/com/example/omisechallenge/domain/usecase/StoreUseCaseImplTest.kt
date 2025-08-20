@@ -3,12 +3,13 @@ package com.example.omisechallenge.domain.usecase
 import com.example.omisechallenge.data.ApiResult
 import com.example.omisechallenge.data.model.request.OrderRequest
 import com.example.omisechallenge.data.repository.StoreRepository
-import com.example.omisechallenge.domain.model.Product
+import com.example.omisechallenge.domain.model.ProductResult
 import com.example.omisechallenge.domain.model.Store
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.impl.annotations.MockK
+import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -83,14 +84,8 @@ class StoreUseCaseImplTest {
     fun getProducts_onSuccess_returnsSuccess() {
         runTest {
             // Given
-            val mockProductList = listOf(
-                Product(
-                    name = "Mock Product",
-                    price = 30,
-                    imageUrl = "Mock Image Url"
-                )
-            )
-            val expectedResult = ApiResult.Success(mockProductList)
+            val mockProductResult = mockk<ProductResult>(relaxed = true)
+            val expectedResult = ApiResult.Success(mockProductResult)
 
             coEvery { storeRepository.getProducts() } returns expectedResult
 
@@ -99,7 +94,7 @@ class StoreUseCaseImplTest {
 
             // Then
             assertTrue(result is ApiResult.Success)
-            assertEquals(mockProductList, (result as ApiResult.Success).data)
+            assertEquals(mockProductResult, (result as ApiResult.Success).data)
 
             coVerify(exactly = 1) {
                 storeRepository.getProducts()
@@ -135,12 +130,9 @@ class StoreUseCaseImplTest {
         runTest {
             // Given
             val orderRequest = OrderRequest(
-                products = listOf(Product(
-                    name = "Mock Product",
-                    price = 30,
-                    imageUrl = "Mock Image Url"
-                )),
-                delivery_address = "Mock Address"
+                name = "Mock Product",
+                price = 30,
+                address = "Mock Address"
             )
             val expectedResult = ApiResult.Success(Unit)
 
@@ -163,12 +155,9 @@ class StoreUseCaseImplTest {
         runTest {
             // Given
             val orderRequest = OrderRequest(
-                products = listOf(Product(
-                    name = "Mock Product",
-                    price = 30,
-                    imageUrl = "Mock Image Url"
-                )),
-                delivery_address = "Mock Address"
+                name = "Mock Product",
+                price = 30,
+                address = "Mock Address"
             )
 
             val errorMessage = "Mock Error"
