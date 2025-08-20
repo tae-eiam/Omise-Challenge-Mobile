@@ -55,7 +55,13 @@ class SummaryFragment : BaseFragment() {
     }
 
     private fun initToolbar() {
-        (activity as AppCompatActivity).setSupportActionBar(binding.toolbar)
+        (activity as AppCompatActivity).apply {
+            setSupportActionBar(binding.toolbar)
+            supportActionBar?.apply {
+                setDisplayHomeAsUpEnabled(true)
+                setDisplayShowHomeEnabled(true)
+            }
+        }
     }
 
     private fun initSummaryContent() {

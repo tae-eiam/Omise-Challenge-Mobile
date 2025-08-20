@@ -29,6 +29,6 @@ class HomeActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        return navController.popBackStack()
+        return navController.navigateUp() || super.onSupportNavigateUp()
     }
 }

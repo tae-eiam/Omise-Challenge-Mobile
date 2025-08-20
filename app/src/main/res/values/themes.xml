@@ -9,6 +9,11 @@
 
     <style name="Theme.OmiseChallenge" parent="Base.Theme.OmiseChallenge" />
 
+    <style name="ToolbarTheme" parent="ThemeOverlay.AppCompat.ActionBar">
+        <item name="colorControlNormal">@color/white</item>
+        <item name="android:textColorPrimary">@color/white</item>
+    </style>
+
     <style name="HeadingPrimary">
         <item name="android:textSize">@dimen/_13ssp</item>
         <item name="android:textStyle">bold</item>
