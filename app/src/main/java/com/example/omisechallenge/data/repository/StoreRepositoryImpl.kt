@@ -40,7 +40,6 @@ class StoreRepositoryImpl @Inject constructor(
     override suspend fun makeOrder(orderRequest: OrderRequest): ApiResult<Unit> {
         return try {
             val response = apiService.makeOrder(orderRequest)
-
             if (response.isSuccessful) {
                 ApiResult.Success(Unit)
             } else {

@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.omisechallenge.data.ApiResult
 import com.example.omisechallenge.data.model.request.OrderRequest
-import com.example.omisechallenge.domain.model.Product
 import com.example.omisechallenge.domain.usecase.StoreUseCase
 import com.example.omisechallenge.ui.UiState
 import com.example.omisechallenge.ui.model.Order
@@ -37,8 +36,9 @@ class SummaryViewModel @Inject constructor(): ViewModel() {
 
     fun validatePayment() {
         val orderRequest = OrderRequest(
-            products = getProductListFromOrderList(),
-            delivery_address = address
+            name = orderList[0].name,
+            price = orderList[0].price,
+            address = address
         )
 
         viewModelScope.launch {
@@ -49,20 +49,5 @@ class SummaryViewModel @Inject constructor(): ViewModel() {
                 is ApiResult.Error -> _paymentState.value = UiState.Error(result.message)
             }
         }
-    }
-
-    private fun getProductListFromOrderList(): List<Product> {
-        val productList = mutableListOf<Product>()
-
-        orderList.forEach { order ->
-            productList.add(Product(
-                id = order.id,
-                name = order.name,
-                price = order.price,
-                imageUrl = order.imageUrl
-            ))
-        }
-
-        return productList
     }
 }

@@ -1,8 +1,9 @@
 package com.example.omisechallenge.data.model.request
 
-import com.example.omisechallenge.domain.model.Product
+import com.google.gson.annotations.SerializedName
 
 data class OrderRequest(
-    val products: List<Product>,
-    val delivery_address: String
+    @SerializedName("name") val name: String,
+    @SerializedName("price") val price: Int,
+    @SerializedName("delivery_address") val address: String
 )
