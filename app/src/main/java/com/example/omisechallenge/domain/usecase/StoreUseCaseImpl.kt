@@ -15,8 +15,8 @@ class StoreUseCaseImpl @Inject constructor(
         return storeRepository.getStoreInfo()
     }
 
-    override suspend fun getProducts(page: Int): ApiResult<ProductResult> {
-        return storeRepository.getProducts(page)
+    override suspend fun getProducts(): ApiResult<ProductResult> {
+        return storeRepository.getProducts()
     }
 
     override suspend fun makeOrder(orderRequest: OrderRequest): ApiResult<Unit> {

@@ -11,7 +11,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.omisechallenge.R
 import com.example.omisechallenge.common.Constant
 import com.example.omisechallenge.databinding.FragmentProductBinding
@@ -93,10 +92,7 @@ class ProductFragment : BaseFragment() {
     }
 
     private fun configProducts(products: List<Product>) {
-        productAdapter.updateData(
-            orders = viewModel.convertProductListToOrderList(products),
-            isLoadMore = !viewModel.isLastPage
-        )
+        productAdapter.updateData(viewModel.convertProductListToOrderList(products))
     }
 
     private fun configNextButton() {
@@ -115,21 +111,6 @@ class ProductFragment : BaseFragment() {
     }
 
     override fun initListeners() {
-        binding.rvStoreProduct.addOnScrollListener(object : RecyclerView.OnScrollListener(){
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-
-                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-                val visibleItemCount = layoutManager.childCount
-                val totalItemCount = layoutManager.itemCount
-                val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
-
-                if (visibleItemCount + firstVisibleItemPosition >= totalItemCount && firstVisibleItemPosition >= 0) {
-                    viewModel.loadProducts()
-                }
-            }
-        })
-
         productAdapter.setOnProductEventTypeListener { onEventTypeListener ->
             when (onEventTypeListener) {
                 is OnEventTypeListener.OnAddOrderClickListener -> {

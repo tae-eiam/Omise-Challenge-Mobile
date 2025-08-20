@@ -3,7 +3,6 @@ package com.example.omisechallenge.data.repository
 import com.example.omisechallenge.data.ApiResult
 import com.example.omisechallenge.data.model.request.OrderRequest
 import com.example.omisechallenge.data.service.ApiService
-import com.example.omisechallenge.domain.model.Product
 import com.example.omisechallenge.domain.model.ProductResult
 import com.example.omisechallenge.domain.model.Store
 import javax.inject.Inject
@@ -25,9 +24,9 @@ class StoreRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getProducts(page: Int): ApiResult<ProductResult> {
+    override suspend fun getProducts(): ApiResult<ProductResult> {
         return try {
-            val response = apiService.getProducts(page)
+            val response = apiService.getProducts()
             if (response.isSuccessful) {
                 ApiResult.Success(response.body()!!.data!!.productResultResponse!!.toProductResult())
             } else {

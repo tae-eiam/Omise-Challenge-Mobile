@@ -33,10 +33,6 @@ class ProductViewModel @Inject constructor(
     private var _selectedOrderList: MutableList<Order> = mutableListOf()
     val selectedOrderList: List<Order> = _selectedOrderList
 
-    var isLastPage = false
-    private var currentPage = 1
-    private var productList = mutableListOf<Product>()
-
     fun loadStoreInfo() {
         if (_storeState.value is UiState.Idle) {
             viewModelScope.launch {
@@ -47,32 +43,26 @@ class ProductViewModel @Inject constructor(
                         _storeState.value = UiState.Success(storeInfo.data)
                         loadProducts()
                     }
-                    is ApiResult.Error -> _storeState.value = UiState.Error(storeInfo.message)
+                    is ApiResult.Error -> {
+                        _storeState.value = UiState.Error(storeInfo.message)
+                    }
                 }
             }
         }
     }
 
     fun loadProducts() {
-        if (_productState.value is UiState.Loading || isLastPage) {
-            return
-        }
-
-        viewModelScope.launch {
-            _productState.value = UiState.Loading
-            val products = storeUseCase.getProducts(currentPage)
-            when(products) {
-                is ApiResult.Success -> {
-                    if (currentPage >= products.data.paginationInfo.totalPages) {
-                        isLastPage = true
+        if (_productState.value is UiState.Idle) {
+            viewModelScope.launch {
+                _productState.value = UiState.Loading
+                val products = storeUseCase.getProducts()
+                when(products) {
+                    is ApiResult.Success -> {
+                        _productState.value = UiState.Success(products.data.productList)
                     }
-
-                    productList.addAll(products.data.productList)
-                    _productState.value = UiState.Success(productList)
-                    currentPage++
-                }
-                is ApiResult.Error -> {
-                    _productState.value = UiState.Error(products.message)
+                    is ApiResult.Error -> {
+                        _productState.value = UiState.Error(products.message)
+                    }
                 }
             }
         }

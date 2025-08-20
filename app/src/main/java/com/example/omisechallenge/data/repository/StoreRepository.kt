@@ -7,6 +7,6 @@ import com.example.omisechallenge.domain.model.Store
 
 interface StoreRepository {
     suspend fun getStoreInfo(): ApiResult<Store>
-    suspend fun getProducts(page: Int): ApiResult<ProductResult>
+    suspend fun getProducts(): ApiResult<ProductResult>
     suspend fun makeOrder(orderRequest: OrderRequest): ApiResult<Unit>
 }
