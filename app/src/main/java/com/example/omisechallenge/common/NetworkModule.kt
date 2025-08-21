@@ -14,7 +14,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-    private const val BASE_URL = "https://mobile-coding-challenge-api.free.beeceptor.com"
+    private const val BASE_URL = "https://mobile-coding-challenge-api-1.free.beeceptor.com"
     private val logging = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
     private val okHttpClient = OkHttpClient.Builder().addInterceptor(logging).build()
 
