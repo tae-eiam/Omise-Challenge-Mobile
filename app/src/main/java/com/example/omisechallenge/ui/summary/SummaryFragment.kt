@@ -68,7 +68,7 @@ class SummaryFragment : BaseFragment() {
         with(binding) {
             rvContent.apply {
                 layoutManager = LinearLayoutManager(context)
-                adapter = SummaryAdapter(viewModel.orderList).apply {
+                adapter = SummaryAdapter(viewModel.orderList, viewModel.address).apply {
                     setOnAddressTextChangedListener { text ->
                         viewModel.address = text
                         configConfirmButton()

@@ -10,7 +10,8 @@ import com.example.omisechallenge.ui.summary.viewholder.AddressViewHolder
 import com.example.omisechallenge.ui.summary.viewholder.OrderItemViewHolder
 
 class SummaryAdapter(
-    private var items: List<Order> = listOf()
+    private var items: List<Order> = listOf(),
+    private var address: String = ""
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var onAddressTextChangedListener: ((String) -> Unit)? = null
 
@@ -41,7 +42,7 @@ class SummaryAdapter(
     ) {
         when(holder) {
             is OrderItemViewHolder -> holder.bind(items[position])
-            is AddressViewHolder -> holder.bind()
+            is AddressViewHolder -> holder.bind(address)
             else -> Unit
         }
     }
